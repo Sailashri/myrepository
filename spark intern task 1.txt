@@ -1,0 +1,38 @@
+install.packages("dplyr")
+library(dplyr)
+#for data manipulation
+install.packages("caTools")
+library(caTools)
+
+#for splitting our data into tests and training sets
+#import data by this
+x=read.csv("https://raw.githubusercontent.com/AdiPersonalWorks/Random/master/student_scores%20-%20student_scores.csv")
+x
+#split the data into test and training sets
+split=sample.split(x$Hours,SplitRatio = .90)
+train=subset(x,split==T)
+Test=subset(x,split==F)
+train
+Test
+#Build linear Regression model using train set
+Model=lm(Scores~Hours,data = train)
+Model
+summary(Model)
+#predict
+predictresults= predict(Model,Test)
+predictresults
+#bind the actual values with the predicted values
+y=cbind(Actual=Test,Predict=predictresults)
+y=as.data.frame(y)
+y
+#finding error
+error=(y$Actual.Scores-y$Predict)
+error
+yfinal=cbind(y,error)
+yfinal
+#predict the score if a student studies for 9.25 hours per day
+a=data.frame(Hours=9.25)
+predictscore=predict(lm(Scores~Hours,data = Test),newdata=a)
+predictscore
+#everytime we split the data into new train and test sets we get a new prediction for 9.25 hours
+#the prediction values range from scores 89 to 99
